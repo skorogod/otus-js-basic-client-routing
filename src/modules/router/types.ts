@@ -7,3 +7,5 @@ export type Listener = {
   onBeforeEnter?: Function;
   onLeave?: Function;
 };
+
+export type Mode = "history" | "hash";

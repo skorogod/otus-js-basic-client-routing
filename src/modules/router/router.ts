@@ -1,7 +1,7 @@
-import { Match } from "./types";
+import { Match, Mode } from "./types";
 import { Listener } from "./types";
 
-export function Router() {
+export function Router(mode?: Mode) {
   let listeners: Array<Listener> = [];
   let currentPath: string = location.pathname;
   let previousPath: string | null = null;
@@ -49,7 +49,6 @@ export function Router() {
     onLeave?: Function,
   ) => {
     const id = generateId();
-    console.log(match);
 
     const listener: Listener = { id, match, onEnter, onBeforeEnter, onLeave };
     listeners.push(listener);
@@ -58,15 +57,24 @@ export function Router() {
 
   const go = (url: string, state?: typeof history.state) => {
     previousPath = currentPath;
-    history.pushState(state, url, url);
-    currentPath = location.pathname;
 
-    handleAllListeners();
+    if (mode && mode === "history") {
+      history.pushState(state, url, url);
+      handleAllListeners();
+    } else {
+      location.hash = url;
+    }
   };
 
   window.addEventListener("popstate", function () {
     previousPath = currentPath;
     currentPath = location.pathname;
+    handleAllListeners();
+  });
+
+  window.addEventListener("hashchange", () => {
+    let match = location.href.match(/\/#(.*)$/);
+    currentPath = match ? match[1] : "/";
     handleAllListeners();
   });
 
@@ -80,7 +88,10 @@ export function Router() {
 
       event.preventDefault();
 
-      let url: string = element.getAttribute("href");
+      let url: string;
+
+      url = element.getAttribute("href");
+
       go(url);
     });
   });
