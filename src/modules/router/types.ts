@@ -6,6 +6,9 @@ export type Listener = {
   onEnter: Function;
   onBeforeEnter?: Function;
   onLeave?: Function;
+  params?: {};
 };
 
 export type Mode = "history" | "hash";
+
+export type hookEvents = "beforeRequest";

@@ -26,3 +26,6 @@ router.on(
   () => console.log("ENTER ABOUT"),
   () => console.log("LEAVE ABOUT"),
 );
+router.on("/checkAsync", createRender("ASYNC"), async () => {
+  setTimeout((_) => console.log("check async"), 10000);
+});

@@ -11,20 +11,26 @@ export function Router(mode?: Mode) {
     (typeof match === "function" && match(path)) ||
     (typeof match === "string" && match === path);
 
-  const handleListener = ({
+  const handleListener = async ({
     match,
     onEnter,
     onBeforeEnter,
     onLeave,
+    params,
   }: Listener) => {
-    const args = { currentPath, previousPath, state: history.state };
+    if (typeof params === "object") {
+      params = { ...params, currentPath, previousPath, state: history.state };
+    } else {
+      params = { currentPath, previousPath, state: history.state };
+    }
+
     if (isMatch(match, currentPath)) {
       if (onBeforeEnter) {
-        onBeforeEnter();
+        await onBeforeEnter(params);
       }
-      onEnter(args);
+      await onEnter(params);
     }
-    onLeave && isMatch(match, previousPath) && onLeave();
+    onLeave && isMatch(match, previousPath) && (await onLeave(params));
   };
 
   const handleAllListeners = () => listeners.forEach(handleListener);
@@ -47,10 +53,18 @@ export function Router(mode?: Mode) {
     onEnter: Function,
     onBeforeEnter?: Function,
     onLeave?: Function,
+    params?: {},
   ) => {
     const id = generateId();
 
-    const listener: Listener = { id, match, onEnter, onBeforeEnter, onLeave };
+    const listener: Listener = {
+      id,
+      match,
+      onEnter,
+      onBeforeEnter,
+      onLeave,
+      params,
+    };
     listeners.push(listener);
     handleListener(listener);
   };
@@ -82,7 +96,6 @@ export function Router(mode?: Mode) {
     document.body.addEventListener("click", (event: any) => {
       const element: Element = event.target;
       if (!element.matches("a")) {
-        console.log(event);
         return;
       }
 
