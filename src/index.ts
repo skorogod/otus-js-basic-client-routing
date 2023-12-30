@@ -30,4 +30,7 @@ router.on("/checkAsync", createRender("ASYNC"), async () => {
   setTimeout(() => console.log("check async"), 10000);
 });
 
+router.on("/index", createRender("index"), async () => {
+  setTimeout(() => console.log("check index"), 10000);
+});
 unsubscribe();
