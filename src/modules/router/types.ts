@@ -12,3 +12,5 @@ export type Listener = {
 export type Mode = "history" | "hash";
 
 export type hookEvents = "beforeRequest";
+
+export type RouterType = { on: Function; go: Function };

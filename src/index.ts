@@ -1,6 +1,6 @@
 import { Router } from "./modules/router/router";
 
-const router = Router();
+const router = Router("hash");
 
 const createRender =
   (content: string) =>
@@ -14,7 +14,7 @@ const createRender =
     }
   };
 
-router.on(
+const unsubscribe = router.on(
   /.*/,
   createRender("/.*"),
   () => console.log("before Enter"),
@@ -27,5 +27,7 @@ router.on(
   () => console.log("LEAVE ABOUT"),
 );
 router.on("/checkAsync", createRender("ASYNC"), async () => {
-  setTimeout((_) => console.log("check async"), 10000);
+  setTimeout(() => console.log("check async"), 10000);
 });
+
+unsubscribe();

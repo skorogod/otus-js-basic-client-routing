@@ -26,7 +26,9 @@
   "devDependencies": {
     "@babel/core": "^7.23.6",
     "@babel/preset-env": "^7.23.6",
+    "@babel/preset-typescript": "^7.23.3",
     "@jest/globals": "^29.7.0",
+    "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@webpack-cli/generators": "^3.0.7",

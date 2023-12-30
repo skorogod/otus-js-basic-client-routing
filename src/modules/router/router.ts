@@ -1,7 +1,7 @@
-import { Match, Mode } from "./types";
+import { Match, Mode, RouterType } from "./types";
 import { Listener } from "./types";
 
-export function Router(mode?: Mode) {
+export function Router(mode?: Mode): RouterType {
   let listeners: Array<Listener> = [];
   let currentPath: string = location.pathname;
   let previousPath: string | null = null;
@@ -23,11 +23,13 @@ export function Router(mode?: Mode) {
     } else {
       params = { currentPath, previousPath, state: history.state };
     }
-
+    console.log("match ", match);
+    console.log("curr ", currentPath);
     if (isMatch(match, currentPath)) {
       if (onBeforeEnter) {
         await onBeforeEnter(params);
       }
+      console.log(currentPath);
       await onEnter(params);
     }
     onLeave && isMatch(match, previousPath) && (await onLeave(params));
@@ -67,13 +69,20 @@ export function Router(mode?: Mode) {
     };
     listeners.push(listener);
     handleListener(listener);
+
+    return () => {
+      listeners = listeners.filter((listener) => listener.id !== id);
+    };
   };
 
   const go = (url: string, state?: typeof history.state) => {
     previousPath = currentPath;
 
     if (mode && mode === "history") {
+      url = url.replace(location.origin, "") || "/";
+      console.log(url);
       history.pushState(state, url, url);
+      currentPath = location.pathname;
       handleAllListeners();
     } else {
       location.hash = url;
