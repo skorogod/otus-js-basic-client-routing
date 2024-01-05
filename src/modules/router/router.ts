@@ -1,4 +1,4 @@
-import { Match, Mode, RouterType } from "./types";
+import { Match, Mode, RouterType, Hooks } from "./types";
 import { Listener } from "./types";
 
 export function Router(mode?: Mode): RouterType {
@@ -14,9 +14,8 @@ export function Router(mode?: Mode): RouterType {
   const handleListener = async ({
     match,
     onEnter,
-    onBeforeEnter,
-    onLeave,
     params,
+    hooks,
   }: Listener) => {
     if (typeof params === "object") {
       params = { ...params, currentPath, previousPath, state: history.state };
@@ -26,13 +25,13 @@ export function Router(mode?: Mode): RouterType {
     console.log("match ", match);
     console.log("curr ", currentPath);
     if (isMatch(match, currentPath)) {
-      if (onBeforeEnter) {
-        await onBeforeEnter(params);
+      if (hooks && hooks.onBeforeEnter) {
+        await hooks.onBeforeEnter(params);
       }
       console.log(currentPath);
       await onEnter(params);
     }
-    onLeave && isMatch(match, previousPath) && (await onLeave(params));
+    hooks && hooks.onLeave && isMatch(match, previousPath) && (await hooks.onLeave(params));
   };
 
   const handleAllListeners = () => listeners.forEach(handleListener);
@@ -53,9 +52,8 @@ export function Router(mode?: Mode): RouterType {
   const on = (
     match: Match,
     onEnter: Function,
-    onBeforeEnter?: Function,
-    onLeave?: Function,
-    params?: {},
+    params: {} = {},
+    hooks?: Hooks,
   ) => {
     const id = generateId();
 
@@ -63,8 +61,7 @@ export function Router(mode?: Mode): RouterType {
       id,
       match,
       onEnter,
-      onBeforeEnter,
-      onLeave,
+      hooks,
       params,
     };
     listeners.push(listener);

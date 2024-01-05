@@ -4,10 +4,14 @@ export type Listener = {
   id: number;
   match: Match;
   onEnter: Function;
-  onBeforeEnter?: Function;
-  onLeave?: Function;
+  hooks: Hooks;
   params?: {};
 };
+
+export type Hooks = {
+  onBeforeEnter?: Function,
+  onLeave?: Function,
+}
 
 export type Mode = "history" | "hash";
 

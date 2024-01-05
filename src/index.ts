@@ -1,6 +1,6 @@
 import { Router } from "./modules/router/router";
 
-const router = Router("hash");
+const router = Router("history");
 
 const createRender =
   (content: string) =>
