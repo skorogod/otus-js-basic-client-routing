@@ -9,9 +9,9 @@ export type Listener = {
 };
 
 export type Hooks = {
-  onBeforeEnter?: Function,
-  onLeave?: Function,
-}
+  onBeforeEnter?: Function;
+  onLeave?: Function;
+};
 
 export type Mode = "history" | "hash";
 

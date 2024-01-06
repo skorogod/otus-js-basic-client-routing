@@ -22,16 +22,18 @@ export function Router(mode?: Mode): RouterType {
     } else {
       params = { currentPath, previousPath, state: history.state };
     }
-    console.log("match ", match);
-    console.log("curr ", currentPath);
+
     if (isMatch(match, currentPath)) {
       if (hooks && hooks.onBeforeEnter) {
         await hooks.onBeforeEnter(params);
       }
-      console.log(currentPath);
       await onEnter(params);
     }
-    hooks && hooks.onLeave && isMatch(match, previousPath) && (await hooks.onLeave(params));
+
+    hooks &&
+      hooks.onLeave &&
+      isMatch(match, previousPath) &&
+      (await hooks.onLeave(params));
   };
 
   const handleAllListeners = () => listeners.forEach(handleListener);
@@ -77,7 +79,6 @@ export function Router(mode?: Mode): RouterType {
 
     if (mode && mode === "history") {
       url = url.replace(location.origin, "") || "/";
-      console.log(url);
       history.pushState(state, url, url);
       currentPath = location.pathname;
       handleAllListeners();
